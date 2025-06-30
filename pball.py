@@ -25,12 +25,12 @@ REGISTRATION_FEE = 35
 
 st.sidebar.write("## Club Pricing")
 st.sidebar.text(f"""
-Individual Membership Monthly Fee: ${INDIVIDUAL_MONTHLY}
-Family Membership Monthly Fee: ${FAMILY_MONTHLY}
-One Time Registration Fee: ${REGISTRATION_FEE}
+Individual Membership Monthly Fee: *${INDIVIDUAL_MONTHLY}*
+Family Membership Monthly Fee: *${FAMILY_MONTHLY}*
+One Time Registration Fee: *${REGISTRATION_FEE}*
 
-Reservation Fee for a Doubles Game (Member): ${MEMBER_DOUBLES_RES}
-Reservation Fee for a Doubles Game (Non-Member): ${VISITOR_DOUBLES_RES}
+Reservation Fee Per Hour Per Person for Doubles Game (Member): *${MEMBER_DOUBLES_RES}*
+Reservation Fee Per Hour Per Person or Doubles Game (Non-Member): *${VISITOR_DOUBLES_RES}*
 """)
 
 col1, col2, col3, col4 = st.columns(4)
@@ -38,6 +38,7 @@ col1, col2, col3, col4 = st.columns(4)
 
 
 games_per_month = st.slider("Number of Games We Would Play Per Month", min_value=1, max_value=30)
+hours_per_game = st.slider("Number of Hours Per Game", min_value=1, max_value=3)
 num_months = st.slider("Number of Months", min_value=1, max_value=24, value=12)
 
 
@@ -46,7 +47,7 @@ num_months = st.slider("Number of Months", min_value=1, max_value=24, value=12)
 
 # Individual Membership
 def calculate_individual(num_months):
-    cost =  (INDIVIDUAL_MONTHLY * num_months) + (MEMBER_DOUBLES_RES * games_per_month * num_months) + REGISTRATION_FEE
+    cost =  (INDIVIDUAL_MONTHLY * num_months) + (MEMBER_DOUBLES_RES * games_per_month * hours_per_game * num_months) + REGISTRATION_FEE
     return cost
 
 
@@ -55,12 +56,12 @@ def calculate_individual(num_months):
 
 # Family Membership
 def calculate_family(num_months):    
-    family_member_cost = (FAMILY_MONTHLY * num_months) + (MEMBER_DOUBLES_RES * games_per_month * num_months) + REGISTRATION_FEE
+    family_member_cost = (FAMILY_MONTHLY * num_months) + (MEMBER_DOUBLES_RES * games_per_month * hours_per_game * num_months) + REGISTRATION_FEE
     family_per_person = float(family_member_cost / 3)
     return family_per_person
 
 def calculate_family_total(num_months):    
-    family_member_cost = (FAMILY_MONTHLY * num_months) + (MEMBER_DOUBLES_RES * games_per_month * num_months) + REGISTRATION_FEE
+    family_member_cost = (FAMILY_MONTHLY * num_months) + (MEMBER_DOUBLES_RES * games_per_month * hours_per_game * num_months) + REGISTRATION_FEE
     family_per_person = float(family_member_cost / 3)
     return family_member_cost    
 
@@ -70,7 +71,7 @@ def calculate_family_total(num_months):
 
 # Visitor Rate
 def calculate_visitor(num_months):
-    visitor_cost = (VISITOR_DOUBLES_RES * games_per_month * num_months)
+    visitor_cost = (VISITOR_DOUBLES_RES * games_per_month * hours_per_game * num_months)
     return visitor_cost
 
 
@@ -140,14 +141,14 @@ fig.add_trace(go.Scatter(
 # --- Customize the Plot Layout ---
 fig.update_layout(
     title={
-        'text': f"Pickleball Club Projected Prices Per Month| Assuming We Play {games_per_month} Games Per Month",
+        'text': f"Pickleball Club Projected Prices Per Month| Assuming We Play {games_per_month}, {hours_per_game}-Hour Games Per Month",
         'y':0.95,
         'x':0.5,
         'xanchor': 'center',
         'yanchor': 'top'
     },
     xaxis_title="Month Number",
-    yaxis_title="Price Per Person",
+    yaxis_title="Price Per Person ($)",
     hovermode="x unified", # Shows all y-values for a given x on hover
     legend_title="User Type",
     font=dict(
